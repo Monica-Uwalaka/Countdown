@@ -1,16 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useState} from "react";
+import { NativeBaseProvider, Flex} from "native-base";
+import { StyleSheet, ScrollView, SafeAreaView} from 'react-native';
+import {Timer} from './components/Timer.js'
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NativeBaseProvider>
+      <SafeAreaView style={styles.SafeAreaViewContainer}>
+        <ScrollView>
+          <Flex flexDirection="column" alignSelf="center" marginTop="150px">
+            <Timer/>
+            <StatusBar style="auto" />
+          </Flex>
+        </ScrollView>
+      </SafeAreaView>
+    </NativeBaseProvider>
   );
 }
 
 const styles = StyleSheet.create({
+  SafeAreaViewContainer:{
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+    height: '100%',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
