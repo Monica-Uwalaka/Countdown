@@ -1,69 +1,67 @@
 
-import React from "react";
-import {Input, Flex} from "native-base";
+import React  from "react";
+import {Flex} from "native-base";
+import SelectDropdown from 'react-native-select-dropdown'
 
 export const TimerTextInput = ({setHour, setMinute, setSecond}) => {
-
-    const valueTypes = {"hour": 23, "minute":59, "second": 59};
    
-    const setValue = (value, type) => {
-       console.log("******", typeof(value), value, parseInt(value))
-       if (value && !isNaN(value)){
-           value == parseInt(value);
-           if(0 <= value <= valueTypes[type]){
-
-           }
-          
-       }
-
-       return "00"
-    }
-
-    const validateHour = (value) => {
-
-    }
-
-    const validateMinute = (value) => {
-
-    }
-
-    const validateSecond  = (value) => {
-
-    }
-
-
+    const range = (start, stop, step) => Array.from({length: (stop-start) / step + 1}, (_, i) => (start+(i*step))).map(String)
+    
     return(
-        <Flex width= "200px" height="50px" flexDirection="row" alignSelf="center" justifyContent="space-between" marginTop="50px" >
-            <Input w={{
-                base: "50px",
-                md: "50px"
-                }} 
-                textAlign='center' 
-                maxLength={2}
-                placeholder='00'
-                name = 'hour'
-                keyboardType="numeric"
-                onChange = {(e) => {setHour(setValue(e.target.value, "hour"))}}/>
-            <Input w={{
-                base: "50px",
-                md: "50px"
-                }}  
-                textAlign='center'
-                maxLength={2}
-                placeholder="00"
-                name = 'minute'
-                keyboardType="numeric"
-                onChange = {(e) => {setMinute(setValue(e.target.value), "minute")}} />
-            <Input w={{
-                base: "50px",
-                md: "50px"
-                }}  
-                maxLength={2}
-                textAlign='center'
-                placeholder="00"
-                name = 'second'
-                 keyboardType="numeric"
-                onChange = {(e) => {setSecond(setValue(e.target.value, "second"))}} />
+        <Flex width= "200px" height="50px" flexDirection="column" alignSelf="center" justifyContent="space-between" marginTop="50px" >
+
+
+            <SelectDropdown
+                data={range(0, 23, 1)}
+                onSelect={(selectedItem, index) => {
+                    setHour(selectedItem)
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem
+                }}
+                rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item
+                }}
+            />
+
+            <SelectDropdown
+                data={range(0, 59, 1)}
+                onSelect={(selectedItem, index) => {
+                    setMinute(selectedItem)
+                    console.log(selectedItem, index)
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem
+                }}
+                rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item
+                }}
+            />
+
+            <SelectDropdown
+                data={range(0, 59, 1)}
+                onSelect={(selectedItem, index) => {
+                    setSecond(selectedItem)
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem
+                }}
+                rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item
+                }}
+            />          
         </Flex>
     )
 }
