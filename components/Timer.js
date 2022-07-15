@@ -16,7 +16,6 @@ export const Timer = () => {
     const [timerSet, SetTimerSet] = useState(isTimerSet(time));
     const [timerRunning, setTimerRunning] = useState(false);
     const [timerPaused, setTimerPaused] = useState(false);
-    const [timerCanceled, setTimerCanceled] = useState(true);
     const [hour, setHour] = useState("00");
     const [minute, setMinute] = useState("00");
     const [second, setSecond] = useState("00");
@@ -27,9 +26,7 @@ export const Timer = () => {
         let newTime = time.subtract(1,"seconds").format('HH:mm:ss').split(":"); 
         setHour(newTime[0]); 
         setMinute(newTime[1]); 
-        setSecond(newTime[2]); 
-      
-        
+        setSecond(newTime[2]);  
       
     }
 
@@ -37,10 +34,23 @@ export const Timer = () => {
         setTimerPaused(!timerPaused)
     }
 
+
+    const cancelTimer = () => {
+        setHour("00");
+        setMinute("00");
+        setSecond("00");
+        setTimerRunning(false);
+
+    }
+
+    const startTimer = () => {
+        setTimerRunning(true);
+
+    }
+
     let TextInput;
     {
-        if (timerCanceled){
-            
+        if (!timerRunning){
             TextInput = <TimerTextInput setHour={setHour} setMinute={setMinute} setSecond={setSecond}/>;
         }
         else {
@@ -61,21 +71,18 @@ export const Timer = () => {
 
     //useeffect to start timer
     useEffect(() => {
-
         if(timerRunning && !timerPaused){
            
             nIntervId.current = setInterval(countdown, 1000)
         }
         else{
-            console.log(nIntervId.current)
             clearInterval(nIntervId.current);
             nIntervId,current = null;
 
+    
         }
 
-    }, [timerRunning, timerPaused])
-    
-    
+    }, [timerRunning, timerPaused]);
 
     return (
 
@@ -101,6 +108,7 @@ export const Timer = () => {
                 
                 <Button
                     disabled = {!timerRunning}
+                    onPress={cancelTimer}
                     title="Cancel"
                     color="#841584"
                 />
@@ -125,7 +133,7 @@ export const Timer = () => {
                     //show start button only when timer is not running
                     <Button
                         disabled = {!timerSet}
-                        onPress={() => {setTimerRunning(true)}}
+                        onPress={startTimer}
                         title="Start"
                         color="#841584"
                     />
@@ -140,7 +148,7 @@ export const Timer = () => {
             :
             <></>
             }
-            
+
         </View>
        
     );
