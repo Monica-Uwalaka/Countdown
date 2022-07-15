@@ -15,6 +15,7 @@ export const Timer = () => {
     const [time, setTime] = useState(moment('00:00:00', "HH:mm:ss"));
     const [timerSet, SetTimerSet] = useState(isTimerSet(time));
     const [timerRunning, setTimerRunning] = useState(false);
+    const [timerPaused, setTimerPaused] = useState(false);
     const [timerCanceled, setTimerCanceled] = useState(true);
     const [hour, setHour] = useState("00");
     const [minute, setMinute] = useState("00");
@@ -22,13 +23,20 @@ export const Timer = () => {
 
     const  nIntervId = useRef();
 
-    //This useEffect listens for changes in the hour, minute and second varialbles
-    useEffect(() => {
-        setTime(moment(`${hour}:${minute}:${second}`,  "HH:mm:ss"));
-        SetTimerSet(isTimerSet(moment(`${hour}:${minute}:${second}`,  "HH:mm:ss")));
-       
-    }, [hour, minute, second]);
-    
+    const countdown = () => {
+        let newTime = time.subtract(1,"seconds").format('HH:mm:ss').split(":"); 
+        setHour(newTime[0]); 
+        setMinute(newTime[1]); 
+        setSecond(newTime[2]); 
+      
+        
+      
+    }
+
+    const togglePause = () => {
+        setTimerPaused(!timerPaused)
+    }
+
     let TextInput;
     {
         if (timerCanceled){
@@ -41,10 +49,20 @@ export const Timer = () => {
         }
     }
 
-    //this useEffect is used to control the timer 
+
+    //This useEffect listens for changes in the hour, minute and second varialbles
+    useEffect(() => {
+        setTime(moment(`${hour}:${minute}:${second}`,  "HH:mm:ss"));
+        SetTimerSet(isTimerSet(moment(`${hour}:${minute}:${second}`,  "HH:mm:ss")));
+       
+    }, [hour, minute, second]);
+    
+   
+
+    //useeffect to start timer
     useEffect(() => {
 
-        if(timerRunning){
+        if(timerRunning && !timerPaused){
            
             nIntervId.current = setInterval(countdown, 1000)
         }
@@ -55,21 +73,9 @@ export const Timer = () => {
 
         }
 
-    }, [timerRunning])
+    }, [timerRunning, timerPaused])
     
-
-    const resetCountDown = () => {
-       setTimerRunning(false)
-     
-    }
-
-    const countdown = () => {
-        let newTime = time.subtract(1,"seconds").format('HH:mm:ss').split(":"); 
-        setHour(newTime[0]); 
-        setMinute(newTime[1]); 
-        setSecond(newTime[2]); 
-      
-    }
+    
 
     return (
 
@@ -92,34 +98,49 @@ export const Timer = () => {
                 padding: 20,
                 }}
                 >
-
+                
                 <Button
                     disabled = {!timerRunning}
-                    onPress={resetCountDown}
                     title="Cancel"
                     color="#841584"
-                    accessibilityLabel="Learn more about this purple button"
                 />
 
                 {
-                    timerRunning?
-                    <Button
-                        title="Pause"
-                        onPress={resetCountDown}
-                        color="#841584"
-                        accessibilityLabel="Learn more about this purple button"
-                    />
-                    :
                     
+                    timerRunning?
+                        //conditionally show pause and resume button while timer is running 
+                        timerPaused?
+                        <Button
+                            onPress={togglePause}
+                            title="Resume"
+                            color="#841584"
+                        />
+                        :
+                        <Button
+                            onPress={togglePause}
+                            title="Pause"
+                            color="#841584"
+                        />
+                    :
+                    //show start button only when timer is not running
                     <Button
+                        disabled = {!timerSet}
                         onPress={() => {setTimerRunning(true)}}
                         title="Start"
                         color="#841584"
-                        accessibilityLabel="Learn more about this purple button"
                     />
                 }
+
             </View>
-            {TextInput}
+            
+            {
+            //display text input only when timer is not running
+            !timerRunning?
+            TextInput
+            :
+            <></>
+            }
+            
         </View>
        
     );
